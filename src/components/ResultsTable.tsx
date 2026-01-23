@@ -27,7 +27,6 @@ const columns: Column[] = [
         <span className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-border/60 group-hover:bg-border" />
         <div className="min-w-0">
           <div className="truncate font-medium text-fg">{row.biomarker.name}</div>
-          <div className="mt-0.5 truncate text-xs text-muted">{row.biomarker.standardUnit}</div>
         </div>
       </div>
     ),
