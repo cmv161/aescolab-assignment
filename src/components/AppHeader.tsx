@@ -6,7 +6,7 @@ export function AppHeader() {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
   return (
-    <header className="sticky top-0 bg-bg/80 border-b border-border backdrop-blur shadow-sm">
+    <header className="sticky z-30 top-0 bg-bg/80 border-b border-border backdrop-blur shadow-sm">
       <div className="flex justify-between px-6 py-4 ">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Biomarker Results</h1>
         <button
