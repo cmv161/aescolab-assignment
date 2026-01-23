@@ -1,11 +1,9 @@
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 
-type AppHeaderProps = {
-  theme: "light" | "dark";
-  onToggleTheme: () => void;
-};
+import { useTheme } from "@/hooks/useTheme";
 
-export function AppHeader({ theme, onToggleTheme }: AppHeaderProps) {
+export function AppHeader() {
+  const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
   return (
     <header className="sticky top-0 bg-bg/80 border-b border-border backdrop-blur shadow-sm">
@@ -15,7 +13,7 @@ export function AppHeader({ theme, onToggleTheme }: AppHeaderProps) {
           type="button"
           role="switch"
           aria-checked={isDark}
-          onClick={onToggleTheme}
+          onClick={toggleTheme}
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-fg/10 dark:hover:bg-fg/15 cursor-pointer"
           aria-label="Toggle theme"
         >
