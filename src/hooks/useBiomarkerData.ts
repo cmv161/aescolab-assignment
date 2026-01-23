@@ -33,5 +33,5 @@ export function useBiomarkerData() {
     [biomarkers, results],
   );
 
-  return { loading, error, enriched };
+  return { loading, error, enriched, reload: load };
 }
