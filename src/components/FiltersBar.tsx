@@ -1,10 +1,27 @@
-import { SelectMenu } from "@/components/SelectMenu";
-import { SORT_OPTIONS, type SortKey } from "@/domain/biomarkerSort";
+import {
+  buildCategoryOptions,
+  buildDateOptions,
+  getSelectedOption,
+  SORT_FILTER_OPTIONS,
+  STATUS_OPTIONS,
+} from "@/components/filters/filters.config";
+import { FiltersBarDesktop } from "@/components/filters/FiltersBarDesktop";
+import { FiltersBarMobile } from "@/components/filters/FiltersBarMobile";
+import type { FilterGroup, FiltersBarUI, ViewMode } from "@/components/filters/types";
+import { DEFAULT_SORT, type SortKey } from "@/domain/biomarkerSort";
+import type { CategoryFilter, StatusFilter } from "@/domain/types";
 
 type Props = {
+  sampleDates: string[];
+  activeDate: string;
+  onActiveDateChange: (value: string) => void;
+
   categories: string[];
-  category: string;
-  onCategoryChange: (v: string) => void;
+  category: CategoryFilter;
+  onCategoryChange: (v: CategoryFilter) => void;
+
+  status: StatusFilter;
+  onStatusChange: (v: StatusFilter) => void;
 
   sort: SortKey;
   onSortChange: (v: SortKey) => void;
@@ -14,57 +31,92 @@ type Props = {
 
   showReset: boolean;
   onReset: () => void;
+
+  view: ViewMode;
+  onViewChange: (view: ViewMode) => void;
 };
 
 export function FiltersBar({
+  sampleDates,
+  activeDate,
+  onActiveDateChange,
   categories,
   category,
   onCategoryChange,
+  status,
+  onStatusChange,
   sort,
   onSortChange,
   total,
   shown,
   showReset,
   onReset,
+  view,
+  onViewChange,
 }: Props) {
+  const dateOptions = buildDateOptions(sampleDates);
+  const categoryOptions = buildCategoryOptions(categories);
+  const statusOptions = STATUS_OPTIONS;
+  const selectedCategory = getSelectedOption(categoryOptions, category);
+  const activeDateOption = getSelectedOption(dateOptions, activeDate);
+  const selectedStatus = getSelectedOption(statusOptions, status);
+  const selectedSort = getSelectedOption(SORT_FILTER_OPTIONS, sort);
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "category",
+      label: "Category",
+      value: category,
+      options: categoryOptions,
+      selectedLabel: selectedCategory.label,
+      onChange: onCategoryChange,
+    },
+    {
+      id: "status",
+      label: "Status",
+      value: status,
+      options: statusOptions,
+      selectedLabel: selectedStatus.label,
+      onChange: onStatusChange,
+    },
+    {
+      id: "sort",
+      label: "Sort",
+      value: sort,
+      options: SORT_FILTER_OPTIONS,
+      selectedLabel: selectedSort.label,
+      onChange: onSortChange,
+    },
+  ];
+  const activeFiltersCount =
+    (category !== "all" ? 1 : 0) + (status !== "all" ? 1 : 0) + (sort !== DEFAULT_SORT ? 1 : 0);
+
+  const ui: FiltersBarUI = {
+    date: {
+      options: dateOptions,
+      value: activeDate,
+      label: activeDateOption?.label ?? "No data",
+      onChange: onActiveDateChange,
+    },
+    groups: filterGroups,
+    reset: {
+      show: showReset,
+      onReset,
+    },
+    activeFiltersCount,
+    view: {
+      value: view,
+      onChange: onViewChange,
+    },
+    resultCount: {
+      shown,
+      total,
+    },
+  };
+
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-bg/90 p-3 shadow-sm md:flex-row md:items-center md:justify-between">
-      <div className="flex flex-row items-end gap-2 md:items-center md:gap-3">
-        <SelectMenu
-          label="Category"
-          value={category}
-          options={[
-            { value: "all", label: "All" },
-            { value: "empty", label: "Empty" },
-            ...categories.map((c) => ({ value: c, label: c })),
-          ]}
-          onChange={onCategoryChange}
-        />
-
-        <SelectMenu
-          label="Sort"
-          value={sort}
-          options={SORT_OPTIONS}
-          onChange={(next) => onSortChange(next as SortKey)}
-        />
-
-        {showReset && (
-          <button
-            type="button"
-            className="h-9 rounded-lg border border-border/70 bg-bg px-3 text-xs font-medium text-fg shadow-sm transition hover:bg-border/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/20"
-            onClick={onReset}
-          >
-            Reset
-          </button>
-        )}
-      </div>
-
-      <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-border/10 px-3 py-1 text-xs text-muted">
-        <span>Showing</span>
-        <span className="font-medium text-fg">{shown}</span>
-        <span>of</span>
-        <span className="font-medium text-fg">{total}</span>
-      </div>
+    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-bg/90 p-3 shadow-sm">
+      <FiltersBarMobile ui={ui} />
+      <FiltersBarDesktop ui={ui} />
     </div>
   );
 }
