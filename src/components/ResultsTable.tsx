@@ -3,7 +3,6 @@
 import { StatusBadge } from "@/components/StatusBadge";
 import type { EnrichedResult } from "@/domain/types";
 import { cn } from "@/lib/cn";
-import { formatDate } from "@/lib/formatDate";
 
 type Props = {
   rows: EnrichedResult[];
@@ -22,12 +21,11 @@ const columns: Column[] = [
   {
     id: "biomarker",
     header: "Biomarker",
+    headerClassName: "pl-8",
+    cellClassName: "pl-8",
     cell: (row) => (
-      <div className="flex items-start gap-3">
-        <span className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-border/60 group-hover:bg-border" />
-        <div className="min-w-0">
-          <div className="truncate font-medium text-fg">{row.biomarker.name}</div>
-        </div>
+      <div className="min-w-0">
+        <div className="truncate font-medium text-fg">{row.biomarker.name}</div>
       </div>
     ),
   },
@@ -60,16 +58,10 @@ const columns: Column[] = [
     id: "category",
     header: "Category",
     cell: (row) => (
-      <span className="inline-flex items-center rounded-full border border-border bg-border/10 px-2 py-1 text-xs text-muted">
+      <span className="inline-flex min-w-[100px] items-center justify-center rounded-full border border-border bg-border/10 px-2 py-1 text-xs text-muted">
         {row.biomarker.category}
       </span>
     ),
-  },
-  {
-    id: "sampled",
-    header: "Sampled",
-    cellClassName: "text-muted",
-    cell: (row) => formatDate(row.sampledAt),
   },
 ];
 
@@ -127,10 +119,6 @@ export function ResultsTable({ rows, onRowClick }: Props) {
             })}
           </tbody>
         </table>
-      </div>
-
-      <div className="border-t border-border px-4 py-2 text-xs text-muted">
-        Tip: Use filters to narrow down by category.
       </div>
     </div>
   );
