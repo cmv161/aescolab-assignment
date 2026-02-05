@@ -5,6 +5,9 @@ export default {
   darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
+      screens: {
+        "3xl": "1920px",
+      },
       colors: {
         bg: "rgb(var(--bg) / <alpha-value>)",
         fg: "rgb(var(--fg) / <alpha-value>)",
