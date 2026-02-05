@@ -4,6 +4,8 @@ export type ReferenceRange = {
 };
 
 export type ResultStatus = "low" | "normal" | "high";
+export type StatusFilter = "all" | "outside" | ResultStatus;
+export type CategoryFilter = "all" | "empty" | (string & {});
 
 export type Biomarker = {
   id: string;
