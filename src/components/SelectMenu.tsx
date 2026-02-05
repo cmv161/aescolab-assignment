@@ -12,6 +12,7 @@ import { cn } from "@/lib/cn";
 type SelectOption = {
   value: string;
   label: string;
+  disabled?: boolean;
 };
 
 type SelectMenuProps = {
@@ -58,9 +59,29 @@ export function SelectMenu({ label, value, options, onChange }: SelectMenuProps)
 
   const selected = options.find((option) => option.value === value) ?? options[0];
 
+  const findNextEnabledIndex = (fromIndex: number, delta: number) => {
+    if (options.length === 0) return -1;
+    let index = fromIndex;
+    while (true) {
+      index += delta;
+      if (index < 0 || index >= options.length) return -1;
+      if (!options[index]?.disabled) return index;
+    }
+  };
+
+  const resolveActiveIndex = (fromIndex: number) => {
+    if (!options[fromIndex]?.disabled) return fromIndex;
+    const next = findNextEnabledIndex(fromIndex, 1);
+    if (next !== -1) return next;
+    const prev = findNextEnabledIndex(fromIndex, -1);
+    if (prev !== -1) return prev;
+    return fromIndex;
+  };
+
   const moveActive = (delta: number, fromIndex = activeIndex) => {
     if (options.length === 0) return;
-    const nextIndex = Math.min(options.length - 1, Math.max(0, fromIndex + delta));
+    const nextIndex = findNextEnabledIndex(fromIndex, delta);
+    if (nextIndex === -1) return;
     setActiveIndex(nextIndex);
     const nextValue = options[nextIndex]?.value;
     if (nextValue && nextValue !== value) {
@@ -88,13 +109,14 @@ export function SelectMenu({ label, value, options, onChange }: SelectMenuProps)
       if (open) {
         setOpen(false);
       } else {
-        setActiveIndex(selectedIndex);
+        setActiveIndex(resolveActiveIndex(selectedIndex));
         setOpen(true);
       }
     }
   };
 
   const handleOptionClick = (index: number) => {
+    if (options[index]?.disabled) return;
     const nextValue = options[index]?.value;
     if (!nextValue) return;
     onChange(nextValue);
@@ -118,7 +140,7 @@ export function SelectMenu({ label, value, options, onChange }: SelectMenuProps)
             if (open) {
               setOpen(false);
             } else {
-              setActiveIndex(selectedIndex);
+              setActiveIndex(resolveActiveIndex(selectedIndex));
               setOpen(true);
             }
           }}
@@ -146,17 +168,22 @@ export function SelectMenu({ label, value, options, onChange }: SelectMenuProps)
             {options.map((option, index) => {
               const isActive = index === activeIndex;
               const isSelected = option.value === value;
+              const isDisabled = option.disabled;
               return (
                 <li
                   key={option.value}
                   role="option"
                   aria-selected={isSelected}
+                  aria-disabled={isDisabled}
                   className={cn(
-                    "cursor-pointer select-none rounded-md px-2 py-1.5 text-fg transition",
+                    "select-none rounded-md px-2 py-1.5 text-fg transition",
                     isActive ? "bg-border/50" : "hover:bg-border/30",
                     isSelected && "font-bold",
+                    isDisabled && "cursor-not-allowed text-muted hover:bg-transparent",
                   )}
-                  onMouseEnter={() => setActiveIndex(index)}
+                  onMouseEnter={() => {
+                    if (!isDisabled) setActiveIndex(index);
+                  }}
                   onClick={() => handleOptionClick(index)}
                 >
                   <span className="block truncate">{option.label}</span>
