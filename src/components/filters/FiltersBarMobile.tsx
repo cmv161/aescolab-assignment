@@ -37,9 +37,6 @@ export function FiltersBarMobile({ ui }: Props) {
         <ViewToggle value={view.value} onChange={view.onChange} />
 
         <div className="ml-auto flex items-center gap-2">
-          <span className="hidden min-[400px]:inline text-[11px] font-semibold text-muted">
-            Filters
-          </span>
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <button
