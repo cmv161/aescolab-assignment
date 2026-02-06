@@ -128,9 +128,9 @@
   {
     "id": "res_019",
     "biomarkerId": "bio_019",
-    "value": 88,
+    "value": 150,
     "sampledAt": "2026-01-10T08:30:00.000Z",
-    "status": "normal"
+    "status": "high"
   },
   {
     "id": "res_020",
@@ -277,6 +277,20 @@
     "biomarkerId": "bio_029",
     "value": 11.8,
     "sampledAt": "2025-10-15T09:00:00.000Z",
+    "status": "low"
+  },
+  {
+    "id": "res_019",
+    "biomarkerId": "bio_019",
+    "value": 88,
+    "sampledAt": "2025-10-15T09:00:00.000Z",
+    "status": "normal"
+  },
+  {
+    "id": "res_019",
+    "biomarkerId": "bio_019",
+    "value": 30,
+    "sampledAt": "2024-01-10T08:30:00.000Z",
     "status": "low"
   }
 ]

@@ -1,6 +1,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { BiomarkerSparkline } from "@/components/biomarkerSparkline/BiomarkerSparkline";
+import type { SparklinePoint } from "@/components/biomarkerSparkline/model";
 import { StatusBadge } from "@/components/StatusBadge";
 import { interpret } from "@/domain/interpret";
 import type { EnrichedResult } from "@/domain/types";
@@ -9,6 +11,7 @@ import { formatDate } from "@/lib/formatDate";
 
 type Props = {
   selected: EnrichedResult | null;
+  allResults: EnrichedResult[];
   onClose: () => void;
 };
 
@@ -59,8 +62,20 @@ function NoteEditor({ storageKey }: NoteEditorProps) {
   );
 }
 
-export function DetailsDrawer({ selected, onClose }: Props) {
+export function DetailsDrawer({ selected, allResults, onClose }: Props) {
   const open = !!selected;
+
+  const trendPoints = useMemo(() => {
+    if (!selected) return [] as SparklinePoint[];
+    return allResults
+      .filter((row) => row.biomarkerId === selected.biomarkerId)
+      .sort((a, b) => new Date(a.sampledAt).getTime() - new Date(b.sampledAt).getTime())
+      .map((row) => ({
+        id: row.id,
+        value: row.value,
+        sampledAt: row.sampledAt,
+      }));
+  }, [allResults, selected]);
 
   const storageKey = selected?.biomarkerId ? `note:${selected.biomarkerId}` : "";
 
@@ -71,7 +86,7 @@ export function DetailsDrawer({ selected, onClose }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
 
-        <Dialog.Content className="fixed right-0 top-0 z-50 h-full w-[min(92vw,460px)] border-l border-border bg-bg p-4 text-fg shadow-xl md:p-5">
+        <Dialog.Content className="fixed right-0 top-0 z-50 h-auto max-h-[80vh] w-[min(92vw,460px)] overflow-y-auto rounded-bl-2xl border-l border-border bg-bg p-4 text-fg shadow-xl md:h-full md:max-h-none md:rounded-bl-none md:p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <Dialog.Title className="text-lg font-semibold tracking-tight">
@@ -107,6 +122,14 @@ export function DetailsDrawer({ selected, onClose }: Props) {
               {selected && <StatusBadge status={selected.status} />}
             </div>
           </div>
+
+          {selected && (
+            <BiomarkerSparkline
+              points={trendPoints}
+              selectedId={selected.id}
+              reference={selected.biomarker.referenceRange}
+            />
+          )}
 
           <div className="mt-4">
             <h3 className="text-sm font-semibold">Interpretation</h3>

@@ -113,7 +113,7 @@ export function BiomarkersPage() {
           </>
         )}
       </main>
-      <DetailsDrawer selected={selected} onClose={() => setSelected(null)} />
+      <DetailsDrawer selected={selected} allResults={enriched} onClose={() => setSelected(null)} />
     </>
   );
 }
