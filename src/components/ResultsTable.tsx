@@ -75,10 +75,6 @@ export function ResultsTable({ rows, onRowClick }: Props) {
             Click a row to view details and add a note.
           </div>
         </div>
-
-        <div className="text-xs text-muted">
-          {rows.length} item{rows.length === 1 ? "" : "s"}
-        </div>
       </div>
 
       <div className="overflow-x-auto">
