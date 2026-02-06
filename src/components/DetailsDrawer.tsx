@@ -86,7 +86,7 @@ export function DetailsDrawer({ selected, allResults, onClose }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
 
-        <Dialog.Content className="fixed right-0 top-0 z-50 h-auto max-h-[80vh] w-[min(92vw,460px)] overflow-y-auto rounded-bl-2xl border-l border-border bg-bg p-4 text-fg shadow-xl md:h-full md:max-h-none md:rounded-bl-none md:p-5">
+        <Dialog.Content className="fixed right-0 top-0 z-50 h-auto max-h-[calc(100svh-1.5rem)] w-[min(92vw,460px)] overflow-y-auto rounded-bl-2xl border-l border-border bg-bg p-4 text-fg shadow-xl md:h-full md:max-h-none md:rounded-bl-none md:p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <Dialog.Title className="text-lg font-semibold tracking-tight">
