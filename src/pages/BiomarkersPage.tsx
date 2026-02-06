@@ -37,6 +37,8 @@ export function BiomarkersPage() {
     setActiveDate,
     statusFilter,
     setStatusFilter,
+    searchQuery,
+    setSearchQuery,
     hasFilters,
     resetFilters,
   } = useBiomarkersViewModel(enriched);
@@ -61,6 +63,8 @@ export function BiomarkersPage() {
               sampleDates={sampleDates}
               activeDate={activeDate}
               onActiveDateChange={setActiveDate}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
               categories={categories}
               category={category}
               onCategoryChange={setCategory}

@@ -40,3 +40,9 @@ export function filterByStatus(
   if (statusFilter === "all") return rows;
   return rows.filter((r) => r.status === statusFilter);
 }
+
+export function filterBySearch(rows: EnrichedResult[], query: string): EnrichedResult[] {
+  const term = query.trim().toLowerCase();
+  if (!term) return rows;
+  return rows.filter((r) => r.biomarker.name.toLowerCase().includes(term));
+}

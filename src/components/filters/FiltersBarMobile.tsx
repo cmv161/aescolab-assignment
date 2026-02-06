@@ -3,6 +3,7 @@ import { CalendarIcon, ChevronRightIcon, MixerHorizontalIcon } from "@radix-ui/r
 import { Fragment } from "react";
 
 import { FilterListDialog } from "@/components/filters/FilterListDialog";
+import { FilterSearchInput } from "@/components/filters/FilterSearchInput";
 import type { FiltersBarUI } from "@/components/filters/types";
 import { ViewToggle } from "@/components/filters/ViewToggle";
 
@@ -11,7 +12,7 @@ type Props = {
 };
 
 export function FiltersBarMobile({ ui }: Props) {
-  const { date, groups, reset, activeFiltersCount, view } = ui;
+  const { date, groups, reset, activeFiltersCount, view, search, resultCount } = ui;
 
   return (
     <div className="md:hidden">
@@ -36,7 +37,9 @@ export function FiltersBarMobile({ ui }: Props) {
         <ViewToggle value={view.value} onChange={view.onChange} />
 
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-muted">Filters</span>
+          <span className="hidden min-[400px]:inline text-[11px] font-semibold text-muted">
+            Filters
+          </span>
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <button
@@ -54,7 +57,7 @@ export function FiltersBarMobile({ ui }: Props) {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 dark:bg-black/60 md:hidden" />
-              <Dialog.Content className="fixed left-0 right-0 top-0 z-50 h-[25vh] overflow-y-auto rounded-b-2xl border border-border bg-bg p-4 text-fg shadow-2xl dark:border-white/60 md:hidden">
+              <Dialog.Content className="fixed left-0 right-0 top-0 z-50 overflow-y-auto rounded-b-2xl border border-border bg-bg px-4 pb-6 pt-4 text-fg shadow-2xl dark:border-white/60 md:hidden">
                 <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-border/60" />
                 <div className="flex items-center justify-between">
                   <Dialog.Title className="text-base font-semibold">Filters</Dialog.Title>
@@ -108,6 +111,20 @@ export function FiltersBarMobile({ ui }: Props) {
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
+        </div>
+      </div>
+
+      <div className="mt-3 flex items-center gap-2">
+        <FilterSearchInput
+          value={search.value}
+          onChange={search.onChange}
+          className="flex-1 min-w-0"
+        />
+        <div className="inline-flex items-center gap-2 text-[11px] text-muted">
+          <span>Showing</span>
+          <span className="font-medium text-muted">{resultCount.shown}</span>
+          <span>of</span>
+          <span className="font-medium text-muted">{resultCount.total}</span>
         </div>
       </div>
     </div>

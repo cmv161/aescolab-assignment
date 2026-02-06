@@ -5,6 +5,7 @@ import type { CategoryFilter, EnrichedResult, StatusFilter } from "@/domain/type
 import {
   filterByCategory,
   filterBySampleDate,
+  filterBySearch,
   filterByStatus,
   getCategories,
   getSampleDates,
@@ -15,6 +16,7 @@ export function useBiomarkersViewModel(enriched: EnrichedResult[]) {
   const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
   const [dateSelection, setDateSelection] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const sampleDates = useMemo(() => getSampleDates(enriched), [enriched]);
 
@@ -38,16 +40,24 @@ export function useBiomarkersViewModel(enriched: EnrichedResult[]) {
   }, [category, categories]);
 
   const filtered = useMemo(() => {
-    const list = filterByStatus(filterByCategory(dateFiltered, activeCategory), statusFilter);
+    const list = filterBySearch(
+      filterByStatus(filterByCategory(dateFiltered, activeCategory), statusFilter),
+      searchQuery,
+    );
     return sortBiomarkers(list, sort);
-  }, [dateFiltered, activeCategory, sort, statusFilter]);
+  }, [dateFiltered, activeCategory, sort, statusFilter, searchQuery]);
 
-  const hasFilters = activeCategory !== "all" || sort !== DEFAULT_SORT || statusFilter !== "all";
+  const hasFilters =
+    activeCategory !== "all" ||
+    sort !== DEFAULT_SORT ||
+    statusFilter !== "all" ||
+    searchQuery.trim().length > 0;
 
   const resetFilters = useCallback(() => {
     setCategory("all");
     setSort(DEFAULT_SORT);
     setStatusFilter("all");
+    setSearchQuery("");
   }, []);
 
   return {
@@ -64,6 +74,8 @@ export function useBiomarkersViewModel(enriched: EnrichedResult[]) {
     setActiveDate: setDateSelection,
     statusFilter,
     setStatusFilter,
+    searchQuery,
+    setSearchQuery,
     hasFilters,
     resetFilters,
   };

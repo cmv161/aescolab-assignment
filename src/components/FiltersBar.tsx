@@ -16,6 +16,9 @@ type Props = {
   activeDate: string;
   onActiveDateChange: (value: string) => void;
 
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+
   categories: string[];
   category: CategoryFilter;
   onCategoryChange: (v: CategoryFilter) => void;
@@ -40,6 +43,8 @@ export function FiltersBar({
   sampleDates,
   activeDate,
   onActiveDateChange,
+  searchQuery,
+  onSearchChange,
   categories,
   category,
   onCategoryChange,
@@ -88,7 +93,10 @@ export function FiltersBar({
     },
   ];
   const activeFiltersCount =
-    (category !== "all" ? 1 : 0) + (status !== "all" ? 1 : 0) + (sort !== DEFAULT_SORT ? 1 : 0);
+    (category !== "all" ? 1 : 0) +
+    (status !== "all" ? 1 : 0) +
+    (sort !== DEFAULT_SORT ? 1 : 0) +
+    (searchQuery.trim().length > 0 ? 1 : 0);
 
   const ui: FiltersBarUI = {
     date: {
@@ -96,6 +104,10 @@ export function FiltersBar({
       value: activeDate,
       label: activeDateOption?.label ?? "No data",
       onChange: onActiveDateChange,
+    },
+    search: {
+      value: searchQuery,
+      onChange: onSearchChange,
     },
     groups: filterGroups,
     reset: {
@@ -114,7 +126,7 @@ export function FiltersBar({
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-bg/90 p-3 shadow-sm">
+    <div className="sticky top-16 z-20 flex flex-col gap-3 rounded-xl border border-border/60 bg-bg p-3 shadow-sm md:static md:z-auto md:border-0 md:bg-transparent md:p-0 md:shadow-none">
       <FiltersBarMobile ui={ui} />
       <FiltersBarDesktop ui={ui} />
     </div>

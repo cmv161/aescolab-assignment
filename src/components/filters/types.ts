@@ -22,6 +22,10 @@ export type FiltersBarUI = {
     label: string;
     onChange: (value: string) => void;
   };
+  search: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   groups: ReadonlyArray<FilterGroup>;
   reset: {
     show: boolean;

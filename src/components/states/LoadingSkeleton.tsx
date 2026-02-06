@@ -12,18 +12,45 @@ const SKELETON_ROWS = [
 export function LoadingSkeleton() {
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-xl border border-border/60 bg-bg/90 p-3 shadow-sm">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="h-10 w-40 rounded-full bg-border/30" />
-            <div className="hidden h-10 w-28 rounded-full bg-border/30 md:block" />
-            <div className="hidden h-10 w-24 rounded-full bg-border/30 md:block" />
-            <div className="hidden h-10 w-24 rounded-full bg-border/30 md:block" />
+      <div className="flex flex-col gap-3">
+        <div className="rounded-xl border border-border/60 bg-bg/90 p-3 shadow-sm md:hidden">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-36 rounded-full bg-border/30" />
+                <div className="h-10 w-16 rounded-full bg-border/30" />
+                <div className="h-9 w-9 rounded-lg bg-border/30" />
+              </div>
+              <div className="h-4 w-20 rounded bg-border/20" />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="h-10 flex-1 rounded-lg bg-border/20" />
+              <div className="h-4 w-20 rounded bg-border/20" />
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden md:flex flex-col gap-3">
+          <div className="rounded-xl border border-border/60 bg-bg/90 px-4 py-3 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-40 rounded-full bg-border/30" />
+                <div className="h-10 w-28 rounded-full bg-border/30" />
+                <div className="h-10 w-24 rounded-full bg-border/30" />
+                <div className="h-9 w-16 rounded-full bg-border/30" />
+              </div>
+              <div className="h-4 w-24 rounded bg-border/20" />
+            </div>
           </div>
 
-          <div className="hidden items-center gap-3 md:flex">
-            <div className="h-9 w-28 rounded-full bg-border/30" />
-            <div className="h-9 w-24 rounded-full bg-border/30" />
+          <div className="rounded-xl border border-border/60 bg-bg/90 px-4 py-3 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-1 items-center gap-3">
+                <div className="h-10 flex-1 rounded-lg bg-border/20" />
+                <div className="h-10 w-28 rounded-full bg-border/30" />
+              </div>
+              <div className="h-9 w-24 rounded-full bg-border/30" />
+            </div>
           </div>
         </div>
       </div>
