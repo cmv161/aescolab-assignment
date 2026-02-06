@@ -9,7 +9,7 @@ import { ResultsTable } from "@/components/ResultsTable";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { LoadingSkeleton } from "@/components/states/LoadingSkeleton";
-import type { EnrichedResult } from "@/domain/types";
+import type { EnrichedResult, StatusFilter } from "@/domain/types";
 import { useBiomarkerData } from "@/hooks/useBiomarkerData";
 import { useBiomarkersViewModel } from "@/hooks/useBiomarkersViewModel";
 
@@ -83,9 +83,16 @@ export function BiomarkersPage() {
               <div className="w-full lg:w-auto lg:basis-80 lg:shrink-0 lg:sticky lg:top-20 self-start">
                 <Overall
                   rows={dateFiltered}
+                  selectedCategory={category}
+                  statusFilter={statusFilter}
+                  onStatusChange={setStatusFilter}
                   onSelectCategory={(nextCategory) => {
-                    setCategory(nextCategory);
-                    setStatusFilter("outside");
+                    setCategory((current) => {
+                      const next = current === nextCategory ? "all" : nextCategory;
+                      const nextStatus: StatusFilter = next === "all" ? "all" : "outside";
+                      setStatusFilter(nextStatus);
+                      return next;
+                    });
                   }}
                 />
               </div>

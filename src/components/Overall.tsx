@@ -1,7 +1,12 @@
-import { CheckCircledIcon, ChevronDownIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import {
+  CheckCircledIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  InfoCircledIcon,
+} from "@radix-ui/react-icons";
 import { useMemo, useState } from "react";
 
-import type { EnrichedResult } from "@/domain/types";
+import type { CategoryFilter, EnrichedResult, StatusFilter } from "@/domain/types";
 import { cn } from "@/lib/cn";
 import { getOverallStats } from "@/lib/overallStats";
 
@@ -9,13 +14,30 @@ type Props = {
   rows: EnrichedResult[];
   showBreakdown?: boolean;
   onSelectCategory?: (category: string) => void;
+  selectedCategory?: CategoryFilter;
+  statusFilter: StatusFilter;
+  onStatusChange: (next: StatusFilter) => void;
 };
 
-export function Overall({ rows, showBreakdown = true, onSelectCategory }: Props) {
+export function Overall({
+  rows,
+  showBreakdown = true,
+  onSelectCategory,
+  selectedCategory,
+  statusFilter,
+  onStatusChange,
+}: Props) {
   const [isInRangeOpen, setIsInRangeOpen] = useState(false);
   const [isNeedsAttentionOpen, setIsNeedsAttentionOpen] = useState(true);
-  const { outsideRange, normalCount, status, headline, needsAttention, normalBiomarkers } =
-    useMemo(() => getOverallStats(rows), [rows]);
+  const { outsideRange, normalCount, status, headline, needsAttention, normalBiomarkers } = useMemo(
+    () => getOverallStats(rows),
+    [rows],
+  );
+  const isNormalActive = statusFilter === "normal";
+  const isOutsideActive = statusFilter === "outside";
+  const toggleStatus = (next: StatusFilter) => {
+    onStatusChange(statusFilter === next ? "all" : next);
+  };
 
   return (
     <div className="rounded-xl border border-border bg-bg shadow-sm divide-y divide-border">
@@ -30,18 +52,56 @@ export function Overall({ rows, showBreakdown = true, onSelectCategory }: Props)
         </div>
         <p className="mt-2 text-sm text-muted">{headline}</p>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-700/80 dark:text-emerald-300/80">
+          <button
+            type="button"
+            aria-pressed={isNormalActive}
+            onClick={() => toggleStatus("normal")}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-2.5 py-1 font-medium text-emerald-700/80 transition dark:text-emerald-300/80 cursor-pointer",
+              isNormalActive
+                ? "border border-emerald-500/30 bg-emerald-500/20 shadow-sm"
+                : "bg-emerald-500/10",
+            )}
+          >
+            <span className="inline-flex h-3 w-3 items-center justify-center">
+              <CheckIcon
+                aria-hidden="true"
+                className={cn(
+                  "h-3 w-3 text-emerald-700/80 transition-opacity dark:text-emerald-300/80",
+                  isNormalActive ? "opacity-100" : "opacity-0",
+                )}
+              />
+            </span>
             In range
             <span className="inline-flex min-w-[20px] justify-center px-1.5 py-0.5 text-[10px] font-semibold">
               {normalCount}
             </span>
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-2.5 py-1 font-medium text-amber-800/80 dark:text-amber-300/80">
+          </button>
+          <button
+            type="button"
+            aria-pressed={isOutsideActive}
+            onClick={() => toggleStatus("outside")}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-2.5 py-1 font-medium text-amber-800/80 transition dark:text-amber-300/80 cursor-pointer",
+              isOutsideActive
+                ? "border border-amber-500/30 bg-amber-500/20 shadow-sm"
+                : "bg-amber-500/10",
+            )}
+          >
+            <span className="inline-flex h-3 w-3 items-center justify-center">
+              <CheckIcon
+                aria-hidden="true"
+                className={cn(
+                  "h-3 w-3 text-amber-800/80 transition-opacity dark:text-amber-300/80",
+                  isOutsideActive ? "opacity-100" : "opacity-0",
+                )}
+              />
+            </span>
             Outside
             <span className="inline-flex min-w-[20px] justify-center px-1.5 py-0.5 text-[10px] font-semibold">
               {outsideRange}
             </span>
-          </span>
+          </button>
         </div>
       </div>
 
@@ -74,25 +134,45 @@ export function Overall({ rows, showBreakdown = true, onSelectCategory }: Props)
                     All categories are within the reference range.
                   </div>
                 ) : (
-                  needsAttention.map((entry) => (
-                    <button
-                      key={entry.category}
-                      type="button"
-                      className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-border/40 bg-border/10 px-2 py-0.5 text-left text-xs text-fg shadow-none transition hover:border-border/60 hover:bg-border/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/20"
-                      onClick={() => onSelectCategory?.(entry.category)}
-                    >
-                      <span className="font-medium text-fg">{entry.category}</span>
-                      <div className="group relative">
-                        <span className="inline-flex min-w-[28px] items-center justify-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-800/80 dark:text-amber-300/80">
-                          {entry.outside}
+                  needsAttention.map((entry) => {
+                    const isCategoryActive = selectedCategory === entry.category;
+
+                    return (
+                      <button
+                        key={entry.category}
+                        type="button"
+                        className={cn(
+                          "flex w-full cursor-pointer items-center justify-between rounded-lg border px-2 py-0.5 text-left text-xs text-fg shadow-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/20",
+                          isCategoryActive
+                            ? "border-amber-500/30 bg-amber-500/10 shadow-sm"
+                            : "border-border/40 bg-border/10 hover:border-border/60 hover:bg-border/20",
+                        )}
+                        onClick={() => onSelectCategory?.(entry.category)}
+                      >
+                        <span className="flex items-center gap-2 font-medium text-fg">
+                          <span className="inline-flex h-3 w-3 items-center justify-center">
+                            <CheckIcon
+                              aria-hidden="true"
+                              className={cn(
+                                "h-3 w-3 text-amber-800/80 transition-opacity dark:text-amber-300/80",
+                                isCategoryActive ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </span>
+                          {entry.category}
                         </span>
-                        <span className="pointer-events-none absolute right-0 top-0 z-10 translate-y-[-120%] whitespace-nowrap rounded-md border border-border bg-bg px-2 py-1 text-[11px] text-muted opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-                          {entry.outside} result{entry.outside === 1 ? "" : "s"} outside the
-                          reference range
-                        </span>
-                      </div>
-                    </button>
-                  ))
+                        <div className="group relative">
+                          <span className="inline-flex min-w-[28px] items-center justify-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-800/80 dark:text-amber-300/80">
+                            {entry.outside}
+                          </span>
+                          <span className="pointer-events-none absolute right-0 top-0 z-10 translate-y-[-120%] whitespace-nowrap rounded-md border border-border bg-bg px-2 py-1 text-[11px] text-muted opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                            {entry.outside} result{entry.outside === 1 ? "" : "s"} outside the
+                            reference range
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })
                 )}
               </div>
             )}
