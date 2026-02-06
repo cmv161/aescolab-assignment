@@ -73,12 +73,12 @@ I adjusted the color scheme for normal, low, and high states. The colors are int
 
 ## Trade-offs
 
-- I focused more on clarity and emotional comfort than on showing everything at once.
+ I focused more on clarity and emotional comfort than on showing everything at once.
 
 
 ## What I Would Improve Next
 
-- Add a compact mode for search and filters on mobile after scrolling:
+ Add a compact mode for search and filters on mobile after scrolling:
   - keep only Search visible at the top
   - move the date selector and view switch into the Filters panel
 
